@@ -28,12 +28,14 @@ import os
 import re
 from pathlib import Path
 
+from .config import MempalaceConfig
+
 HOME = Path.home()
 LUMI_DIR = Path(os.environ.get("MEMPALACE_SOURCE_DIR", str(HOME / "Desktop/transcripts")))
 
 # People we know about (for name detection in content)
 # Loaded from ~/.mempalace/known_names.json if it exists, otherwise generic fallback.
-_KNOWN_NAMES_PATH = HOME / ".mempalace" / "known_names.json"
+_KNOWN_NAMES_PATH = Path(MempalaceConfig().config_dir) / "known_names.json"
 _FALLBACK_KNOWN_PEOPLE = ["Alice", "Ben", "Riley", "Max", "Sam", "Devon", "Jordan"]
 _KNOWN_NAMES_CACHE = None
 

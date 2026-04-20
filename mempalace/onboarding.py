@@ -270,8 +270,14 @@ def _generate_aaak_bootstrap(
     Generate AAAK entity registry + critical facts bootstrap from onboarding data.
     These files teach the AI about the user's world from session one.
     """
-    mempalace_dir = Path(config_dir) if config_dir else Path.home() / ".mempalace"
-    mempalace_dir.mkdir(parents=True, exist_ok=True)
+    from .config import MempalaceConfig
+
+    mempalace_dir = Path(config_dir) if config_dir else Path(MempalaceConfig().config_dir)
+    try:
+        mempalace_dir.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        mempalace_dir = Path.cwd() / ".mempalace"
+        mempalace_dir.mkdir(parents=True, exist_ok=True)
 
     # Build AAAK entity codes (first 3 letters of name, uppercase)
     entity_codes = {}

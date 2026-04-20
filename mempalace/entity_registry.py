@@ -298,7 +298,12 @@ class EntityRegistry:
 
     @classmethod
     def load(cls, config_dir: Optional[Path] = None) -> "EntityRegistry":
-        path = (Path(config_dir) / "entity_registry.json") if config_dir else cls.DEFAULT_PATH
+        if config_dir:
+            path = Path(config_dir) / "entity_registry.json"
+        else:
+            from .config import MempalaceConfig
+
+            path = Path(MempalaceConfig().config_dir) / "entity_registry.json"
         if path.exists():
             try:
                 data = json.loads(path.read_text())
@@ -308,7 +313,12 @@ class EntityRegistry:
         return cls(cls._empty(), path)
 
     def save(self):
-        self._path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            self._path.parent.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            fallback = Path.cwd() / ".mempalace"
+            fallback.mkdir(parents=True, exist_ok=True)
+            self._path = fallback / self._path.name
         self._path.write_text(json.dumps(self._data, indent=2))
 
     @staticmethod

@@ -45,7 +45,8 @@ class Layer0:
 
     def __init__(self, identity_path: str = None):
         if identity_path is None:
-            identity_path = os.path.expanduser("~/.mempalace/identity.txt")
+            cfg = MempalaceConfig()
+            identity_path = os.path.join(cfg.config_dir, "identity.txt")
         self.path = identity_path
         self._text = None
 
@@ -58,9 +59,7 @@ class Layer0:
             with open(self.path, "r") as f:
                 self._text = f.read().strip()
         else:
-            self._text = (
-                "## L0 — IDENTITY\nNo identity configured. Create ~/.mempalace/identity.txt"
-            )
+            self._text = f"## L0 — IDENTITY\nNo identity configured. Create {self.path}"
 
         return self._text
 
@@ -379,7 +378,7 @@ class MemoryStack:
     def __init__(self, palace_path: str = None, identity_path: str = None):
         cfg = MempalaceConfig()
         self.palace_path = palace_path or cfg.palace_path
-        self.identity_path = identity_path or os.path.expanduser("~/.mempalace/identity.txt")
+        self.identity_path = identity_path or os.path.join(cfg.config_dir, "identity.txt")
 
         self.l0 = Layer0(self.identity_path)
         self.l1 = Layer1(self.palace_path)
